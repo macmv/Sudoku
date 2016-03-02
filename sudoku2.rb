@@ -43,8 +43,13 @@ class Board
     end
     puts "-" * 25
   end
-  def pick_out_numbers
-    shuffle_board_locs.each do |p|
+  def pick_out_numbers(level) # 1: easy, 2: medium, 3: hard, 4: psycho
+    s = shuffle_board_locs
+    if level < 4
+      num = (level + 6) * 5
+      s = s[0..num]
+    end
+    s.each do |p|
       new_board = copy_board @board
       new_board[p.y][p.x] = nil
       if is_one_solution? new_board
@@ -198,6 +203,6 @@ end
 if __FILE__ == $0
   b = Board.new
   b.print
-  b.pick_out_numbers
+  b.pick_out_numbers gets.to_i
   b.print
 end

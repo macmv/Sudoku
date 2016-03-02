@@ -11,9 +11,7 @@ end
 
 class Td < Element
   def initialize(board, main_tr_num, main_td_num, tr_num, td_num)
-    @text = <<-HTML
-    <td width=20 height=25><center>#{board.get_loc(main_tr_num, main_td_num, tr_num, td_num)}</center></td>
-HTML
+    @text = "<td width=20 height=25><center>#{board.get_loc(main_tr_num, main_td_num, tr_num, td_num)}</center></td>"
   end
 end
 
@@ -75,7 +73,7 @@ class Html
     @text = <<-HTML
 <html>
 <body>
-<h1>Sudoku #{board_data}</h1>
+<h1><center>Sudoku #{board_data}</center></h1>
 #{MainTable.new(b1).text}
 <h1></h1>
 #{MainTable.new(b2).text}
@@ -88,21 +86,33 @@ HTML
 
 end
 
-b1 = Board.new
-b1.print
-b1.pick_out_numbers
-b1.print
-b2 = Board.new
-b2.print
-b2.pick_out_numbers
-b2.print
-b3 = Board.new
-b3.print
-b3.pick_out_numbers
-b3.print
 print "What level?: "
-level = gets.chomp
-print "What board number?: "
-board_num = gets.chomp
-h = Html.new b1, b2, b3, "#{level}:#{board_num}"
-File.open("html_test.html", "w") { |f| f.write h.text }
+level = gets.chomp.to_i
+print "how many sheets?:"
+sheets = gets.to_i
+sheets.times do |sheet_num|
+  board_num = 1
+  file = "boards/#{level}/#{board_num}.html"
+  while File.exist?(file)
+    board_num += 1
+    file = "boards/#{level}/#{board_num}.html"
+  end
+  b1 = Board.new
+  b1.print
+  b1.pick_out_numbers level
+  b1.print
+  puts "#{((sheet_num * 3 + 1).to_f / (sheets * 3).to_f) * 100.0}%"
+  b2 = Board.new
+  b2.print
+  b2.pick_out_numbers level
+  b2.print
+  puts "#{((sheet_num * 3 + 2).to_f / (sheets * 3).to_f) * 100.0}%"
+  b3 = Board.new
+  b3.print
+  b3.pick_out_numbers level
+  b3.print
+  puts "#{((sheet_num * 3 + 3).to_f / (sheets * 3).to_f) * 100.0}%"
+  h = Html.new b1, b2, b3, "#{level}:#{board_num}"
+  File.open(file, "w") { |f| f.write h.text }
+  puts 
+end
